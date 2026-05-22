@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: pessoa
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/pessoa_db?currentSchema=pessoa_db
+    username: postgres
+    password: postgresql
+  jpa:
+    properties:
+      hibernate:
+        default_schema: pessoa_db
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    schemas: pessoa_db
+
+server:
+  port: 8090
+  servlet:
+        context-path: /api
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      microsservico-serasa:
+        minimum-number-of-calls: 1  # 1 chamada já calcula
+        failure-rate-threshold: 100  # 100% de falha = 1 falha de 1 chamada
+        wait-duration-in-open-state: 3s # 3 segundos aberto
+        automatic-transition-from-open-to-half-open-enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.connections.pooling: ERROR
+    org.springframework.amqp: INFO
+    # Habilita os logs do handler de observação JDBC que criamos
+    com.example.pessoa.config.observability: INFO
+    # Logs internos da lib datasource-micrometer (útil para estudo/debug)
+    net.ttddyy.observation: DEBUG
+  pattern:
+    # Injeta traceId e spanId em cada linha de log → correlação no Grafana Loki
+    level: "%5p [${spring.application.name},%X{traceId:-},%X{spanId:-}]"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  otlp:
+    metrics:
+      export:
+        # Endpoint do OpenTelemetry Collector (OTLP HTTP) para métricas
+        url: http://localhost:4318/v1/metrics
+        # Intervalo de envio das métricas
+        step: 10s
+    tracing:
+      # Endpoint do OpenTelemetry Collector (OTLP HTTP) para traces
+      endpoint: http://localhost:4318/v1/traces
+  tracing:
+    sampling:
+      # 1.0 = 100% das requisições tracadas (ideal para estudo; em produção use ~0.1)
+      probability: 1.0
+  metrics:
+    tags:
+      # Tags globais aplicadas em todas as métricas exportadas
+      environment: local
+
+

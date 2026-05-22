@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(node \"C:\\\\Users\\\\eduardo.marcolino\\\\Downloads\\\\inject_otel_section.js\")"
+    ]
+  }
+}

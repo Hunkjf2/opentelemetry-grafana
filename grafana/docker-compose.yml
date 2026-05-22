@@ -1,0 +1,46 @@
+# ============================================================
+# Stack de Observabilidade — OpenTelemetry + Grafana LGTM
+# ============================================================
+#
+# Sobe um único container com toda a infraestrutura de observabilidade:
+#   - OpenTelemetry Collector  → recebe métricas e traces do app (OTLP HTTP)
+#   - Grafana Mimir            → armazena métricas (compatível com Prometheus)
+#   - Grafana Tempo            → armazena traces distribuídos
+#   - Grafana Loki             → armazena logs
+#   - Grafana                  → visualização unificada
+#
+# Como usar:
+#   docker compose -f docker-compose-observability.yml up -d
+#
+# Acesso ao Grafana:
+#   URL:  http://localhost:3000
+#   User: admin  |  Password: admin
+#
+# O app envia dados para:
+#   Métricas → http://localhost:4318/v1/metrics
+#   Traces   → http://localhost:4318/v1/traces
+# ============================================================
+
+services:
+
+  # -----------------------------------------------------------
+  # Grafana LGTM — imagem all-in-one para desenvolvimento
+  # Inclui: OTel Collector, Mimir, Tempo, Loki e Grafana
+  # -----------------------------------------------------------
+  grafana-lgtm:
+    image: grafana/otel-lgtm:latest
+    container_name: observabilidade-lgtm
+    ports:
+      - "3000:3000"   # Grafana UI
+      - "4317:4317"   # OTLP gRPC (opcional)
+      - "4318:4318"   # OTLP HTTP  ← o app envia dados aqui
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_dados:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  grafana_dados:
+    driver: local

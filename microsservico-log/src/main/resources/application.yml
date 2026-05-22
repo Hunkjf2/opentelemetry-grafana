@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: microsservico-log
+
+  # Configuração PostgreSQL (existente)
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/logs_db?currentSchema=logs_db
+    username: postgres
+    password: postgresql
+
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    default-schema: logs_db
+    schemas: logs_db
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: logs_db
+
+  # Configuração RabbitMQ (existente)
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+  # 🆕 Configuração Redis (NOVO)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: senha123
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8      # Máximo de conexões ativas
+          max-idle: 8        # Máximo de conexões ociosas
+          min-idle: 2        # Mínimo de conexões ociosas
+          max-wait: -1ms     # Tempo máximo de espera por conexão
+
+# 🆕 Propriedades customizadas Redis (NOVO)
+app:
+  redis:
+    key-prefix: "log:"       # Prefixo para todas as chaves
+    default-ttl: 86400       # TTL padrão: 24 horas
+    list-ttl: 3600           # TTL para listas: 1 hora
+    max-list-size: 1000      # Máximo de logs na lista
+
+server:
+  port: 8060
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    org.springframework.amqp: INFO
+    org.springframework.data.redis: INFO  # 🆕 Logs do Redis
+    org.hibernate.orm.connections.pooling: ERROR
+    org.hibernate.SQL: DEBUG

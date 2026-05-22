@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: microsservico-serasa
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+server:
+  port: 8070
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.springframework.amqp: INFO
