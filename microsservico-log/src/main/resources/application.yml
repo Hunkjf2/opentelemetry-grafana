@@ -61,3 +61,29 @@ logging:
     org.springframework.data.redis: INFO  # 🆕 Logs do Redis
     org.hibernate.orm.connections.pooling: ERROR
     org.hibernate.SQL: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  otlp:
+    metrics:
+      export:
+        # Endpoint do OpenTelemetry Collector (OTLP HTTP) para métricas
+        url: http://localhost:4318/v1/metrics
+        # Intervalo de envio das métricas
+        step: 10s
+    tracing:
+      # Endpoint do OpenTelemetry Collector (OTLP HTTP) para traces
+      endpoint: http://localhost:4318/v1/traces
+  tracing:
+    sampling:
+      # 1.0 = 100% das requisições tracadas (ideal para estudo; em produção use ~0.1)
+      probability: 1.0
+  metrics:
+    tags:
+      # Tags globais aplicadas em todas as métricas exportadas
+      environment: local
+
+kind: Application

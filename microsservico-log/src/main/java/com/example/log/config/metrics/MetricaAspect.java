@@ -1,4 +1,4 @@
-package com.example.pessoa.config.metrics;
+package com.example.log.config.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;

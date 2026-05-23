@@ -6,7 +6,6 @@ spring:
     port: 5672
     username: admin
     password: admin
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/pessoa_db?currentSchema=pessoa_db
@@ -24,7 +23,7 @@ spring:
 server:
   port: 8090
   servlet:
-        context-path: /api
+    context-path: /api
 
 resilience4j:
   circuitbreaker:
@@ -40,9 +39,7 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.connections.pooling: ERROR
     org.springframework.amqp: INFO
-    # Habilita os logs do handler de observação JDBC que criamos
     com.example.pessoa.config.observability: INFO
-    # Logs internos da lib datasource-micrometer (útil para estudo/debug)
     net.ttddyy.observation: DEBUG
   pattern:
     # Injeta traceId e spanId em cada linha de log → correlação no Grafana Loki
@@ -71,5 +68,7 @@ management:
     tags:
       # Tags globais aplicadas em todas as métricas exportadas
       environment: local
+
+kind: Application
 
 

@@ -1,6 +1,7 @@
 package com.example.pessoa.service.pessoa;
 
 import com.example.pessoa.config.exception.CpfJaCadastradoException;
+import com.example.pessoa.config.metrics.Loggable;
 import com.example.pessoa.config.metrics.Metrica;
 import com.example.pessoa.dto.PessoaDto;
 import com.example.pessoa.config.exception.PessoaNaoEncontradaException;
@@ -31,6 +32,7 @@ public class PessoaService {
     }
 
     @Transactional
+    @Loggable(operacao = "CADASTRO_PESSOA")
     @Metrica(
             nome = "pessoa.cadastros",
             descricao = "Cadastros de pessoa",

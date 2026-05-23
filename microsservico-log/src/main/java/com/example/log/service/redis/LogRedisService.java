@@ -80,10 +80,8 @@ public class LogRedisService {
                 }
             }
 
-            log.info("Retornados {} logs do cache Redis", logs.size());
             return logs;
         } catch (Exception e) {
-            log.error("Erro ao buscar todos os logs do Redis", e);
             return List.of();
         }
     }

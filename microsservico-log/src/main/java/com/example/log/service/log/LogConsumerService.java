@@ -13,10 +13,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import static com.example.log.constants.TopicLog.*;
 
-/**
- * Consumidor RabbitMQ para eventos de log.
- * Processa mensagens e delega persistência ao LogService.
- */
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,14 +22,7 @@ public class LogConsumerService {
     private final LogService logService;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Processa eventos de log recebidos via RabbitMQ.
-     * Listener síncrono com acknowledgment manual.
-     *
-     * @param logEventDto Evento de log deserializado
-     * @param channel Canal RabbitMQ para ACK/NACK
-     * @param message Mensagem original (metadados)
-     */
+
     @RabbitListener(queues = TOPIC_ENVIAR_LOG)
     public void processarEnvioLog(LogEventDto logEventDto, Channel channel, Message message) {
         try {
@@ -40,11 +30,8 @@ public class LogConsumerService {
                     logEventDto.operacao(), logEventDto.microservico());
 
             PessoaDto pessoaDto = logEventDto.pessoaDto();
-
-            // Serializa evento completo para JSON (campo 'dados')
             String mensagemJson = objectMapper.writeValueAsString(logEventDto);
 
-            // Constrói entidade Log
             Log logObject = Log.builder()
                     .operacao(logEventDto.operacao())
                     .dados(mensagemJson)
@@ -54,19 +41,16 @@ public class LogConsumerService {
                     .idUsuario(pessoaDto.id())
                     .build();
 
-            // Delega para LogService (que salva em PostgreSQL + Redis)
             logService.cadastrarLog(logObject);
 
             log.info("Log processado com sucesso: idUsuario={}, operacao={}",
                     pessoaDto.id(), logEventDto.operacao());
 
-            // Confirma processamento da mensagem
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
 
         } catch (Exception e) {
             log.error("Erro ao processar mensagem de cadastro de log", e);
 
-            // NACK para reprocessamento (opcional, dependendo da estratégia)
             try {
                 channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
             } catch (Exception nackError) {
