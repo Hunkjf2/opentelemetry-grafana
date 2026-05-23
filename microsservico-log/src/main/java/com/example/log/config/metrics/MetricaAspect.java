@@ -28,7 +28,7 @@ public class MetricaAspect {
 
     private final MeterRegistry meterRegistry;
 
-    @Around("@annotation(com.example.pessoa.config.metrics.Metrica)")
+    @Around("@annotation(com.example.log.config.metrics.Metrica)")
     public Object interceptar(ProceedingJoinPoint joinPoint) throws Throwable {
         Metrica metrica = obterAnotacao(joinPoint);
         Timer.Sample timer = Timer.start(meterRegistry);

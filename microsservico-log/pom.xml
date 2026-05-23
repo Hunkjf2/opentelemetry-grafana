@@ -94,6 +94,11 @@
 
 		<!-- ===== Observabilidade: OpenTelemetry ===== -->
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+
 		<!-- Fundação: expõe endpoints /actuator e integra o Micrometer -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
